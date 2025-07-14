@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Dating app</title>
+    <style>
+        :root {
+            --primary: #a72691;
+            --secondary: #e953e9;
+            --dark: #3d3d3d;
+            --light: #f8f9fa;
+            --accent: #a7247f;
+            --text: #333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .tagline {
+            font-style: italic;
+            margin-top: 0.5rem;
+            opacity: 0.9;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background-color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-tab {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-tab.active {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .tab-content {
+            display: none;
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .profile-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            
+        }
+
+        .profile-info {
+            padding: 1rem;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-age {
+            color: pink;
+            opacity: 0.7;
+        }
+
+        .profile-bio {
+            margin: 1rem 0;
+            line-height: 1.5;
+        }
+
+        .heartbeat-display {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+        }
+
+        .heartbeat-line {
+            flex: 1;
+            height: 2px;
+            background-color: var(--accent);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .heartbeat-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            animation: heartbeat 2s infinite;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .match-percentage {
+            font-weight: bold;
+            color: var(--primary);
+            margin-left: 0.5rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-like {
+            background-color: var(--primary);
+            color: white;
+            flex: 1;
+            margin-right: 0.5rem;
+        }
+
+        .btn-pass {
+            background-color: white;
+            color: var(--dark);
+            border: 1px solid var(--dark);
+            flex: 1;
+            margin-left: 0.5rem;
+        }
+
+        .btn-like:hover {
+            background-color: var(--secondary);
+            transform: scale(1.05);
+        }
+
+        .btn-pass:hover {
+            background-color: #f0f0f0;
+        }
+
+        .emotional-connection {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #fff9f9;
+            border-radius: 8px;
+        }
+
+        .connection-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .connection-item {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .connection-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.5rem;
+            color: var(--primary);
+        }
+
+        .matches-tab {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .match-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .match-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .match-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .match-name {
+            padding: 0.5rem;
+            font-weight: bold;
+        }
+
+        .profile-tab {
+            padding: 1rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 1rem;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 1rem;
+            border: 3px solid var(--primary);
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-age {
+            color: var(--dark);
+            opacity: 0.7;
+        }
+
+        .profile-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            border-bottom: 1px solid var(--accent);
+            padding-bottom: 0.25rem;
+        }
+
+        .emotional-response {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .response-icon {
+            margin-right: 0.5rem;
+            color: var(--primary);
+        }
+
+        .heartbeat-animation {
+            width: 100%;
+            height: 60px;
+            position: relative;
+            margin: 1rem 0;
+        }
+
+        .heartbeat-line-animated {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent);
+            overflow: hidden;
+        }
+
+        .heartbeat-line-animated::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            animation: heartbeat 2s infinite;
+        }
+
+        .heartbeat-pulse {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            opacity: 0;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.8; }
+            70% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.3; }
+            100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+        }
+
+        .emotional-response-test {
+            background-color: #fff9f9;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .test-question {
+            margin-bottom: 1rem;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .test-option {
+            padding: 0.5rem;
+            border: 1px solid var(--accent);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .test-option:hover {
+            background-color: var(--accent);
+        }
+
+        .test-option.selected {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .btn-save {
+            background-color: var(--primary);
+            color: white;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-save:hover {
+            background-color: var(--secondary);
+        }
+
+        .emotional-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .emotional-tag {
+            background-color: var(--accent);
+            color: var(--dark);
+            padding: 0.25rem 0.5rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+        }
+
+        .emotional-tag.primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            box-shadow: var(--shadow);
+            z-index: 100;
+            animation: fadeInOut 3s ease-in-out;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+        }
+
+        @media (max-width: 768px) {
+            .profile-image {
+                height: 250px;
+            }
+
+            .matches-tab {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-image {
+                height: 200px;
+            }
+
+            .matches-tab {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .user-avatar {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Heartfelt</div>
+        <div class="tagline">Find love through emotional connection</div>
+    </header>
+
+    <div class="main-container">
+        <div class="nav-tabs">
+            <div class="nav-tab active" data-tab="discover">Discover</div>
+            <div class="nav-tab" data-tab="matches">Matches</div>
+            <div class="nav-tab" data-tab="profile">Profile</div>
+        </div>
+
+        <div class="tab-content active" id="discover">
+            <div class="profile-card">
+                <img src="images/kg (9).jpg" alt="Profile" class="profile-image">
+                <div class="profile-info">
+                    <div class="profile-name">Sarah <span class="profile-age">28</span></div>
+                    <div class="profile-bio">Adventure seeker and coffee enthusiast. Looking for someone to share both quiet moments and spontaneous trips with.</div>
+                    
+                    <div class="heartbeat-display">
+                        <div class="heartbeat-line"></div>
+                        <div class="match-percentage">87%</div>
+                    </div>
+                    
+                    <div class="emotional-connection">
+                        <div class="connection-title">Emotional Connection</div>
+                        <div class="connection-item">
+                            <span class="connection-icon">❤️</span>
+                            <span>Both love heartfelt conversations</span>
+                        </div>
+                        <div class="connection-item">
+                            <span class="connection-icon">🎵</span>
+                            <span>Similar music taste (Classical)</span>
+                        </div>
+                        <div class="connection-item">
+                            <span class="connection-icon">😊</span>
+                            <span>Shared sense of humor</span>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-like">❤️ Like</button>
+                        <button class="btn btn-pass">✖ Pass</button>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-card">
+                <img src="images/kg (16).jpg" alt="Profile" class="profile-image">
+                <div class="profile-info">
+                    <div class="profile-name">Nora <span class="profile-age">23</span></div>
+                    <div class="profile-bio">I'm a fan of dreamy indie music,cocteau twins and mazzy star...looking for who to share ideas with and go on tours together</div>
+                    
+                    <div class="heartbeat-display">
+                        <div class="heartbeat-line"></div>
+                        <div class="match-percentage">89%</div>
+                    </div>
+                    
+                    <div class="emotional-connection">
+                        <div class="connection-title">Emotional Connection</div>
+                        <div class="connection-item">
+                            <span class="connection-icon">❤️</span>
+                            <span>Both love heartfelt conversations</span>
+                        </div>
+                        <div class="connection-item">
+                            <span class="connection-icon">🎵</span>
+                            <span>Similar music taste (Indie Folk)</span>
+                        </div>
+                        <div class="connection-item">
+                            <span class="connection-icon">😊</span>
+                            <span>Shared sense of humor</span>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-like">❤️ Like</button>
+                        <button class="btn btn-pass">✖ Pass</button>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-card">
+                <img src="images/kg (18).jpg" alt="Profile" class="profile-image">
+                <div class="profile-info">
+                    <div class="profile-name">Jessica <span class="profile-age">21</span></div>
+                    <div class="profile-bio">Business Eutheciates and modelling...loking for a partner we can soar high together</div>
+                    
+                    <div class="heartbeat-display">
+                        <div class="heartbeat-line"></div>
+                        <div class="match-percentage">97%</div>
+                    </div>
+                    
+                    <div class="emotional-connection">
+                        <div class="connection-title">Emotional Connection</div>
+                        <div class="connection-item">
+                            <span class="connection-icon">❤️</span>
+                            <span>Both love heartfelt conversations</span>
+                        </div>
+                        <div class="connection-item">
+                            <span class="connection-icon">🎵</span>
+                            <span>Similar music taste (Gospel)</span>
+                        </div>
+                        <div class="connection-item">
+                            <span class="connection-icon">😊</span>
+                            <span>Shared sense of humor</span>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-like">❤️ Like</button>
+                        <button class="btn btn-pass">✖ Pass</button>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-card">
+                <img src="images/kg (17).jpg" alt="Profile" class="profile-image">
+                <div class="profile-info">
+                    <div class="profile-name">Alice <span class="profile-age">25</span></div>
+                    <div class="profile-bio">Love being on the seas,going on Adventures..looking for extraordinary loving personel to tour with</div>
+                    
+                    <div class="heartbeat-display">
+                        <div class="heartbeat-line"></div>
+                        <div class="match-percentage">89%</div>
+                    </div>
+                    
+                    <div class="emotional-connection">
+                        <div class="connection-title">Emotional Connection</div>
+                        <div class="connection-item">
+                            <span class="connection-icon">❤️</span>
+                            <span>Both love heartfelt conversations</span>
+                        </div>
+                        <div class="connection-item">
+                            <span class="connection-icon">🎵</span>
+                            <span>Similar music taste (Gospel)</span>
+                        </div>
+                        <div class="connection-item">
+                            <span class="connection-icon">😊</span>
+                            <span>Shared sense of humor</span>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-like">❤️ Like</button>
+                        <button class="btn btn-pass">✖ Pass</button>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-card">
+                <img src="images/kg (18).jpg" alt="Profile" class="profile-image">
+                <div class="profile-info">
+                    <div class="profile-name">Lucy <span class="profile-age">20</span></div>
+                    <div class="profile-bio">Tech Sis love being on codes..looking for the right debugger to travel far and near with</div>
+                    
+                    <div class="heartbeat-display">
+                        <div class="heartbeat-line"></div>
+                        <div class="match-percentage">92%</div>
+                    </div>
+                    
+                    <div class="emotional-connection">
+                        <div class="connection-title">Emotional Connection</div>
+                        <div class="connection-item">
+                            <span class="connection-icon">❤️</span>
+                            <span>Both love heartfelt conversations</span>
+                        </div>
+                        <div class="connection-item">
+                            <span class="connection-icon">🎵</span>
+                            <span>Similar music taste (whimsical music)</span>
+                        </div>
+                        <div class="connection-item">
+                            <span class="connection-icon">😊</span>
+                            <span>Shared sense of humor</span>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-like">❤️ Like</button>
+                        <button class="btn btn-pass">✖ Pass</button>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-card">
+                <img src="images/kg (20).jpg" alt="Profile" class="profile-image">
+                <div class="profile-info">
+                    <div class="profile-name">Lady Choice <span class="profile-age">28</span></div>
+                    <div class="profile-bio"> Loves to take risks no matter what it takes the goal is to reach my goals..looking for a big time supporter to pull me up when am weak</div>
+                    
+                    <div class="heartbeat-display">
+                        <div class="heartbeat-line"></div>
+                        <div class="match-percentage">91%</div>
+                    </div>
+                    
+                    <div class="emotional-connection">
+                        <div class="connection-title">Emotional Connection</div>
+                        <div class="connection-item">
+                            <span class="connection-icon">❤️</span>
+                            <span>Both love heartfelt conversations</span>
+                        </div>
+                        <div class="connection-item">
+                            <span class="connection-icon">🎵</span>
+                            <span>Similar music taste (soulful music)</span>
+                        </div>
+                        <div class="connection-item">
+                            <span class="connection-icon">😊</span>
+                            <span>Shared sense of humor</span>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-like">❤️ Like</button>
+                        <button class="btn btn-pass">✖ Pass</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="matches">
+            <div class="matches-tab">
+                <div class="match-card">
+                    <img src="images/kl (1).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Loveth (92%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (2).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Kate (85%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (3).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Gracie (78%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (5).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Morgan (91%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (6).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Casey (83%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (8).jpg" alt="Match" class="match-image">
+                    <div class="match-name">lomy (55%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (9).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Raya (99%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (10).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Joyce (85%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (11).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Rita (40%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (12).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Mabel (87%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (13).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Gift (69%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (14).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Dara (90%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (15).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Regina (45%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (16).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Katrina (33%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (17).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Dwanta (89%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (18).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Peculiar (67%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (19).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Tolani (55%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (20).jpg" alt="Match" class="match-image">
+                    <div class="match-name">klana (91%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (21).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Barbie (99%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (22).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Lovena (83%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (23).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Sandra (65%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kl (24).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Rikle (59%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kg (26).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Clara (88%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kg (14).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Aurora (98%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kg (13).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Emily (85%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kg (12).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Shophia (92%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kg (11).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Mia (91%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kg (10).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Isabella (83%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kg (9).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Olivia (99%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kg (7).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Asha (67%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kg (15).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Lonimi (85%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kg (5).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Mara (98%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kg (4).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Feran (99%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kg (3).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Katerina (25%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kg (2).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Lovanser (89%)</div>
+                </div>
+                <div class="match-card">
+                    <img src="images/kg (1).jpg" alt="Match" class="match-image">
+                    <div class="match-name">Pricilia (67%)</div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="tab-content" id="profile">
+            <div class="profile-tab">
+                <div class="profile-header">
+                    <img src="images/kl (7).jpg" alt="Your Profile" class="user-avatar">
+                    <div class="user-info">
+                        <div class="user-name">You</div>
+                        <div class="user-age">30</div>
+                    </div>
+                </div>
+
+                <div class="profile-section">
+                    <div class="section-title">Your Emotional Profile</div>
+                    <div class="heartbeat-animation">
+                        <div class="heartbeat-line-animated"></div>
+                        <div class="heartbeat-pulse"></div>
+                    </div>
+                    <div class="emotional-tags">
+                        <div class="emotional-tag primary">Empathetic</div>
+                        <div class="emotional-tag primary">Adventurous</div>
+                        <div class="emotional-tag">Thoughtful</div>
+                        <div class="emotional-tag">Passionate</div>
+                        <div class="emotional-tag">Optimistic</div>
+                    </div>
+                </div>
+
+                <div class="profile-section">
+                    <div class="section-title">About You</div>
+                    <p>I'm someone who values deep connections and meaningful conversations. I believe the best relationships are built on understanding and emotional compatibility.</p>
+                </div>
+
+                <div class="profile-section">
+                    <div class="section-title">Emotional Responses</div>
+                    <div class="emotional-response">
+                        <span class="response-icon">🎵</span>
+                        <span>Music that moves me: Indie Folk, Jazz</span>
+                    </div>
+                    <div class="emotional-response">
+                        <span class="response-icon">🎬</span>
+                        <span>Films that touch me: Thoughtful dramas, Documentaries</span>
+                    </div>
+                    <div class="emotional-response">
+                        <span class="response-icon">📚</span>
+                        <span>Books that inspire me: Philosophical works, Poetry</span>
+                    </div>
+                </div>
+
+                <div class="emotional-response-test">
+                    <div class="section-title">Update Your Emotional Profile</div>
+                    <div class="test-question">How do you typically respond to emotional situations?</div>
+                    <div class="test-options">
+                        <div class="test-option">I feel deeply and express openly</div>
+                        <div class="test-option">I reflect carefully before responding</div>
+                        <div class="test-option">I look for practical solutions</div>
+                        <div class="test-option">I seek to understand all perspectives</div>
+                    </div>
+                    <button class="btn btn-save">Update Profile</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast hidden">New match! You and Alex have an 92% emotional connection!</div>
+
+    <script>
+        const tabs = document.querySelectorAll('.nav-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                
+            
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                
+                tab.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        
+        const likeBtn = document.querySelector('.btn-like');
+        const passBtn = document.querySelector('.btn-pass');
+        const discoverTab = document.getElementById('discover');
+
+        likeBtn.addEventListener('click', () => {
+            
+            showToast("You liked Sarah! If she likes you back, we'll let you know.");
+            
+
+            setTimeout(() => {
+                discoverTab.innerHTML = `
+                    <div class="profile-card">
+                        <img src="images/kg (22).jpg">
+                        <div class="profile-info">
+                            <div class="profile-name">Alex <span class="profile-age">31</span></div>
+                            <div class="profile-bio">Musician and nature lover. I believe the best connections come from shared values and emotional understanding.</div>
+                            
+                            <div class="heartbeat-display">
+                                <div class="heartbeat-line"></div>
+                                <div class="match-percentage">92%</div>
+                            </div>
+                            
+                            <div class="emotional-connection">
+                                <div class="connection-title">Emotional Connection</div>
+                                <div class="connection-item">
+                                    <span class="connection-icon">🎵</span>
+                                    <span>Both moved by similar music</span>
+                                </div>
+                                <div class="connection-item">
+                                    <span class="connection-icon">🌿</span>
+                                    <span>Shared love for nature</span>
+                                </div>
+                                <div class="connection-item">
+                                    <span class="connection-icon">💭</span>
+                                    <span>Deep thinkers</span>
+                                </div>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn btn-like">❤️ Like</button>
+                                <button class="btn btn-pass">✖ Pass</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Reattach event listeners to new buttons
+                document.querySelector('.btn-like').addEventListener('click', likeBtnHandler);
+                document.querySelector('.btn-pass').addEventListener('click', passBtnHandler);
+            }, 1000);
+        });
+
+        passBtn.addEventListener('click', () => {
+            showToast("Passed on Sarah. Loading someone new...");
+            
+            // Simulate loading a new profile
+            setTimeout(() => {
+                discoverTab.innerHTML = `
+                    <div class="profile-card">
+                        <img src="images/kg (24).jpg" alt="Profile" class="profile-image">
+                        <div class="profile-info">
+                            <div class="profile-name">Taylor <span class="profile-age">29</span></div>
+                            <div class="profile-bio">Writer and coffee shop enthusiast. Looking for someone who appreciates the beauty in everyday moments.</div>
+                            
+                            <div class="heartbeat-display">
+                                <div class="heartbeat-line"></div>
+                                <div class="match-percentage">78%</div>
+                            </div>
+                            
+                            <div class="emotional-connection">
+                                <div class="connection-title">Emotional Connection</div>
+                                <div class="connection-item">
+                                    <span class="connection-icon">📚</span>
+                                    <span>Both enjoy reading</span>
+                                </div>
+                                <div class="connection-item">
+                                    <span class="connection-icon">☕</span>
+                                    <span>Coffee lovers</span>
+                                </div>
+                                <div class="connection-item">
+                                    <span class="connection-icon">✍️</span>
+                                    <span>Creative souls</span>
+                                </div>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn btn-like">❤️ Like</button>
+                                <button class="btn btn-pass">✖ Pass</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                
+                // Reattach event listeners to new buttons
+                document.querySelector('.btn-like').addEventListener('click', likeBtnHandler);
+                document.querySelector('.btn-pass').addEventListener('click', passBtnHandler);
+            }, 1000);
+        });
+
+        function likeBtnHandler() {
+            likeBtn.click();
+        }
+
+        function passBtnHandler() {
+            passBtn.click();
+        }
+
+        // Emotional test selection
+        const testOptions = document.querySelectorAll('.test-option');
+        testOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                testOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+            });
+        });
+
+        // Save profile button
+        const saveBtn = document.querySelector('.btn-save');
+        saveBtn.addEventListener('click', () => {
+            showToast("Your emotional profile has been updated!");
+        });
+
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.querySelector('.toast');
+            toast.textContent = message;
+            toast.classList.remove('hidden');
+            
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        
+        setTimeout(() => {
+            showToast("New match! You and Nora have an 92% emotional connection!");
+        }, 3000);
+    </script>
+</body>
+</html>
